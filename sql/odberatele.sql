@@ -6,7 +6,7 @@ GO
 SELECT DISTINCT
 	SUBSTRING(F.Kod, 3, 100) AS ID, 
 	F.ObchNazev AS Nazev, 
-	'' AS Nazev2,
+	IIF(F.Nazev = F.ObchNazev, '', F.Nazev) AS Nazev2,
 	F.ObchUlice AS Ulice, 
 	F.ObchPsc AS PSC, 
 	F.ObchMisto AS Mesto, 
@@ -23,8 +23,8 @@ SELECT DISTINCT
 	IIF(F.PouzivatKredit = 1, 'N', 'A') AS KupniSmlouva,
 	FORMAT(F.HodnotaSlevy, '0.00') AS RabatO, 
 	FORMAT(IIF(F.SlevaUvadena_UserData != 0, F.SlevaUvadena_UserData, F.HodnotaSlevy), '0.00') AS PRabatO,
-	-- pokud nejvyssi prioritu ceniku ma Prodejní => prirazka=N, v eshopu: pokud sleva<0 a prirazka=N tak sleva je 0
-	IIF(FirmaCenik.Kod = '_PRODEJ', 'N', 'A') AS Prirazka,
+	-- pokud neni akcni nebo ma nizsi prioritu nez prodejni => prirazka=A, v eshopu: pokud sleva<0 a prirazka=N tak sleva je 0
+	IIF(FirmaCenikAkce.Poradi IS NULL OR FirmaCenikAkce.Poradi > FirmaCenikProdej.Poradi, 'A', 'N') AS Prirazka,
 	-- vybere specialni cenik
 	ISNULL(FirmaCenik1.Kod,'') AS CisloSkup,
 	F.KodOdb_UserData AS KodOdb,
@@ -34,11 +34,18 @@ LEFT JOIN System_Groups AS Grp ON Grp.ID = F.Group_ID
 LEFT JOIN Adresar_Osoba AS Os ON Os.ID = F.HlavniOsoba_ID
 LEFT JOIN (
 	SELECT
-		MIN(FirmaCenik.Poradi) AS Poradi, FirmaCenik.Firma_ID AS Firma_ID, MIN(Cenik.Kod) AS Kod
+		FirmaCenik.Parent_ID AS Firma_ID, FirmaCenik.Poradi AS Poradi
 	FROM Adresar_FirmaCenik AS FirmaCenik
 	INNER JOIN Ceniky_Cenik AS Cenik ON Cenik.ID = FirmaCenik.Cenik_ID
-	GROUP BY FirmaCenik.Firma_ID
-) AS FirmaCenik ON FirmaCenik.Firma_ID = F.ID
+	WHERE Cenik.Kod = '_AKCE'
+) AS FirmaCenikAkce ON FirmaCenikAkce.Firma_ID = F.ID
+LEFT JOIN (
+	SELECT
+		FirmaCenik.Parent_ID AS Firma_ID, FirmaCenik.Poradi AS Poradi
+	FROM Adresar_FirmaCenik AS FirmaCenik
+	INNER JOIN Ceniky_Cenik AS Cenik ON Cenik.ID = FirmaCenik.Cenik_ID
+	WHERE Cenik.Kod = '_PRODEJ'
+) AS FirmaCenikProdej ON FirmaCenikProdej.Firma_ID = F.ID
 LEFT JOIN (
 	SELECT
 		MIN(FirmaCenik.Poradi) AS Poradi, FirmaCenik.Firma_ID AS Firma_ID, MIN(Cenik.Kod) AS Kod

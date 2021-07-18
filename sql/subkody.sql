@@ -11,4 +11,4 @@ SELECT
 FROM Artikly_KategorieArtiklu AS K
 WHERE 
 	LEN(K.Kod) = 8
-ORDER BY K.Kod
+ORDER BY K.Poradi_UserData

@@ -16,7 +16,7 @@ echo Deleting files in %dircsv%
 del /S /Q /F "%dircsv%*" >nul 2>&1
 
 for /f %%f IN ('dir /b %dirsql%*.sql') do (
-	sqlcmd -S %sqlserver% -U %sqluser% -P %sqlpass% -i "%dirsql%%%f" -o "%TMP1%" -h -1 -s";" -W
+	sqlcmd -S %sqlserver% -U %sqluser% -P %sqlpass% -i "%dirsql%%%f" -o "%TMP1%" -h -1 -s";" -W -f 1250
 	IF NOT "%ERRORLEVEL%" == "0" SET "ERROR=1" && GOTO :clean	
 	more +1 "%TMP1%" > "%TMP2%"
 	move /y "%TMP2%" "%dircsv%%%~nf%ext%" > nul
