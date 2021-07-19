@@ -1,8 +1,3 @@
-SET NOCOUNT ON
-
-USE S4_Agenda_PEMA
-GO
-
 SELECT DISTINCT
 	A.Kod AS ID,
 	A.Nazev AS Nazev,
@@ -15,7 +10,7 @@ SELECT DISTINCT
 	Jednotka.Kod AS Jednotka,
 	ISNULL((SELECT TOP 1 SUBSTRING(Kod,1,4) FROM Artikly_KategorieArtiklu INNER JOIN STRING_SPLIT(A.Kategorie, '|') AS Split ON Split.value = CAST(Artikly_KategorieArtiklu.ID AS varchar(100)) ORDER BY LEN(Kod) DESC), '0000') AS Kod, 
 	ISNULL((SELECT TOP 1 SUBSTRING(Kod,5,4) FROM Artikly_KategorieArtiklu INNER JOIN STRING_SPLIT(A.Kategorie, '|') AS Split ON Split.value = CAST(Artikly_KategorieArtiklu.ID AS varchar(100)) ORDER BY LEN(Kod) DESC), '0000') AS PodKod,
-	Zasoba.DostupneMnozstvi,
+	CONVERT(INT, Zasoba.DostupneMnozstvi) AS AktualniStav,
 	ISNULL(Priznak.Kod, '') AS Priznak,
 	IIF(ProdKlicExtraOnly.Kod IS NULL, 'A', 'N') AS Zobrazovat,
 	SUBSTRING(Firma.Kod, 3, 100) AS CisloDodavatele,
@@ -59,4 +54,4 @@ LEFT JOIN Adresar_Firma AS Firma ON Firma.ID = Dod.Firma_ID
 WHERE 
 	ProdKlicNeEshop.Parent_ID IS NULL
 	AND A.ExistujeKategorie = 1
-ORDER BY ID
+ORDER BY ID;

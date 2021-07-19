@@ -1,8 +1,3 @@
-SET NOCOUNT ON
-
-USE S4_Agenda_PEMA
-GO
-
 SELECT DISTINCT
 	SUBSTRING(F.Kod, 3, 100) AS ID, 
 	F.ObchNazev AS Nazev, 
@@ -31,6 +26,6 @@ LEFT JOIN (
 WHERE 
 	F.Deleted = 0
 	AND F.Nazev NOT LIKE '||%'
-	AND F.Kod LIKE 'AD2%'
+	AND (F.Kod LIKE 'AD20%' OR F.Kod LIKE 'AD21%')
 	AND (Grp.Kod != 'ZRUS' OR Grp.Kod IS NULL)
-ORDER BY ID
+ORDER BY ID;

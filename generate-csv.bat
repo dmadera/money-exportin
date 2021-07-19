@@ -5,8 +5,11 @@ SET "dir=%~dp0"
 SET "dirsql=%dir%sql\"
 SET "dircsv=%dir%csv\"
 SET "ext=.txt"
-SET "TMP1=%TEMP%\bat~%RANDOM%1.tmp"
-SET "TMP2=%TEMP%\bat~%RANDOM%2.tmp"
+SET "TMP1=%TEMP%\generatecsvbat1.tmp"
+SET "TMP2=%TEMP%\generatecsvbat2.tmp"
+SET "TMP3=%TEMP%\generatecsvbat3.tmp"
+
+SET "DB=%1"
 
 SET /P sqlserver=<%dir%..\Settings\db-server
 SET /P sqluser=<%dir%..\Settings\db-user
@@ -16,7 +19,12 @@ echo Deleting files in %dircsv%
 del /S /Q /F "%dircsv%*" >nul 2>&1
 
 for /f %%f IN ('dir /b %dirsql%*.sql') do (
-	sqlcmd -S %sqlserver% -U %sqluser% -P %sqlpass% -i "%dirsql%%%f" -o "%TMP1%" -h -1 -s";" -W -f 1250
+	echo SET NOCOUNT ON > %TMP3%
+	echo USE %DB% >> %TMP3%
+	echo GO >> %TMP3%
+	type "%dirsql%%%f" >> %TMP3%
+
+	sqlcmd -S %sqlserver% -U %sqluser% -P %sqlpass% -i %TMP3% -o "%TMP1%" -h -1 -s";" -W -f 1250
 	IF NOT "%ERRORLEVEL%" == "0" SET "ERROR=1" && GOTO :clean	
 	more +1 "%TMP1%" > "%TMP2%"
 	move /y "%TMP2%" "%dircsv%%%~nf%ext%" > nul
@@ -28,10 +36,9 @@ for /f %%f IN ('dir /b %dirsql%*.sql') do (
 :clean
 del /F /Q %TMP1% >nul 2>&1
 del /F /Q %TMP2% >nul 2>&1
+del /F /Q %TMP3% >nul 2>&1
 
 IF %ERROR%==0 GOTO :exitsuccess
-
-del /S /Q /F "%dircsv%*" >nul 2>&1
 endlocal
 exit /B 1
 

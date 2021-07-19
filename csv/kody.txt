@@ -1,0 +1,11 @@
+Dezinfekce, roušky, ochr.štíty;0010;
+Prací prostøedky;0001;
+Èistící prostøedky;0002;
+Uklidové pomùcky;0003;
+Papíry a zásobníky;0005;
+Osobní hygiena;0004;
+Technická drogerie;0006;
+Kartáènické zboží;0007;
+Ochranné pomùcky;0009;
+Doplòkové zboží;0008;
+Obaly prodej;0011;

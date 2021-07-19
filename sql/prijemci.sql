@@ -1,8 +1,3 @@
-SET NOCOUNT ON
-
-USE S4_Agenda_PEMA
-GO
-
 SELECT DISTINCT
 	SUBSTRING(F.Kod, 3, 100) AS ID, 
 	F.ProvNazev AS Nazev, 
@@ -16,4 +11,4 @@ LEFT JOIN System_Groups AS Grp ON Grp.ID = F.Group_ID
 WHERE 
 	F.Kod NOT LIKE 'AD2%'
 	AND (Grp.Kod != 'ZRUS' OR Grp.Kod IS NULL)
-ORDER BY ID
+ORDER BY ID;
