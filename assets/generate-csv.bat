@@ -2,8 +2,8 @@
 SETLOCAL
 SET "ERROR=0"
 SET "dir=%~dp0"
-SET "dirsql=%dir%sql\"
-SET "dircsv=%dir%csv\"
+SET "dirsql=%dir%..\sql\"
+SET "dircsv=%dir%..\csv\"
 SET "ext=.txt"
 SET "TMP1=%TEMP%\generatecsvbat1.tmp"
 SET "TMP2=%TEMP%\generatecsvbat2.tmp"
@@ -11,9 +11,9 @@ SET "TMP3=%TEMP%\generatecsvbat3.tmp"
 
 SET "DB=%1"
 
-SET /P sqlserver=<%dir%..\Settings\db-server
-SET /P sqluser=<%dir%..\Settings\db-user
-SET /P sqlpass=<%dir%..\Settings\db-password
+SET /P sqlserver=<%dir%..\..\Settings\db-server
+SET /P sqluser=<%dir%..\..\Settings\db-user
+SET /P sqlpass=<%dir%..\..\Settings\db-password
 
 echo Deleting files in %dircsv%
 del /S /Q /F "%dircsv%*" >nul 2>&1

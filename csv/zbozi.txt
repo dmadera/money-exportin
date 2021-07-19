@@ -130,7 +130,7 @@
 0510;Aceton 700ml plech;60.32;8;0;N;3I33;21;ks;0006;0003;20;;A;20029;
 0514;WC pisoar Prix fresh 4.5kg=180ks;551.69;0;0;N;2N33;21;ks;0002;0008;5;;A;20024;
 0526;Aviváž Robeta/Obzor 1l modrá koncentrát;21.51;12;0;N;2C25;21;ks;0001;0004;10;;A;20048;
-0532;Savo 1,2l original obyè;32.47;6;0;N;1D11;21;ks;0002;0009;6897;;A;20092;
+0532;Savo 1,2l original obyèejné;32.47;6;0;N;1D11;21;ks;0002;0009;6897;;A;20092;
 0533;Rozmývák - potah náhrada 45cm s padem;105.57;10;0;N;5G14;21;ks;0003;0008;14;;A;21007;
 0537;Savo 4kg kanystr;103.26;0;0;N;1D15;21;kan;0002;0009;440;;A;20092;
 0542;Savo plíseò MR 500ml;49.83;20;0;N;1D23;21;ks;0002;0009;1555;;A;20092;
