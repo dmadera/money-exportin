@@ -6,9 +6,8 @@ SELECT DISTINCT
 	F.ProvPsc AS PSC, 
 	F.ProvMisto AS Mesto,
 	''
-FROM Adresar_Firma AS F
-LEFT JOIN System_Groups AS Grp ON Grp.ID = F.Group_ID
+FROM Adresar_Firma AS F WITH(NOLOCK) 
 WHERE 
-	F.Kod NOT LIKE 'AD2%'
-	AND (Grp.Kod != 'ZRUS' OR Grp.Kod IS NULL)
+	F.Deleted = 0 AND F.Hidden = 0
+	AND NOT (F.Kod LIKE 'AD20%' OR F.Kod LIKE 'AD21%')
 ORDER BY ID;

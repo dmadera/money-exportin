@@ -23,40 +23,41 @@ SELECT DISTINCT
 	-- vybere specialni cenik
 	ISNULL(FirmaCenik1.Kod,'') AS CisloSkup,
 	F.KodOdb_UserData AS KodOdb,
+	ZpDopr.Kod,
 	''
-FROM Adresar_Firma AS F
-LEFT JOIN System_Groups AS Grp ON Grp.ID = F.Group_ID
-LEFT JOIN Adresar_Osoba AS Os ON Os.ID = F.HlavniOsoba_ID
+FROM Adresar_Firma AS F WITH(NOLOCK)
+LEFT JOIN System_Groups AS Grp WITH(NOLOCK) ON Grp.ID = F.Group_ID
+LEFT JOIN Adresar_Osoba AS Os WITH(NOLOCK) ON Os.ID = F.HlavniOsoba_ID
 LEFT JOIN (
 	SELECT
 		FirmaCenik.Parent_ID AS Firma_ID, FirmaCenik.Poradi AS Poradi
-	FROM Adresar_FirmaCenik AS FirmaCenik
-	INNER JOIN Ceniky_Cenik AS Cenik ON Cenik.ID = FirmaCenik.Cenik_ID
+	FROM Adresar_FirmaCenik AS FirmaCenik WITH(NOLOCK)
+	INNER JOIN Ceniky_Cenik AS Cenik WITH(NOLOCK) ON Cenik.ID = FirmaCenik.Cenik_ID
 	WHERE Cenik.Kod = '_AKCE'
 ) AS FirmaCenikAkce ON FirmaCenikAkce.Firma_ID = F.ID
 LEFT JOIN (
 	SELECT
 		FirmaCenik.Parent_ID AS Firma_ID, FirmaCenik.Poradi AS Poradi
-	FROM Adresar_FirmaCenik AS FirmaCenik
-	INNER JOIN Ceniky_Cenik AS Cenik ON Cenik.ID = FirmaCenik.Cenik_ID
+	FROM Adresar_FirmaCenik AS FirmaCenik WITH(NOLOCK)
+	INNER JOIN Ceniky_Cenik AS Cenik WITH(NOLOCK) ON Cenik.ID = FirmaCenik.Cenik_ID
 	WHERE Cenik.Kod = '_PRODEJ'
 ) AS FirmaCenikProdej ON FirmaCenikProdej.Firma_ID = F.ID
 LEFT JOIN (
 	SELECT
 		MIN(FirmaCenik.Poradi) AS Poradi, FirmaCenik.Firma_ID AS Firma_ID, MIN(Cenik.Kod) AS Kod
-	FROM Adresar_FirmaCenik AS FirmaCenik
-	INNER JOIN Ceniky_Cenik AS Cenik ON Cenik.ID = FirmaCenik.Cenik_ID
-	WHERE Cenik.Kod NOT LIKE '\_%' ESCAPE '\'
+	FROM Adresar_FirmaCenik AS FirmaCenik WITH(NOLOCK)
+	INNER JOIN Ceniky_Cenik AS Cenik WITH(NOLOCK) ON Cenik.ID = FirmaCenik.Cenik_ID
+	WHERE Cenik.Kod NOT IN ('_AKCE', '_NAKUP', '_PRODEJ')
 	GROUP BY FirmaCenik.Firma_ID
 ) AS FirmaCenik1 ON FirmaCenik1.Firma_ID = F.ID
 LEFT JOIN (
 	SELECT TOP 1
 		SpojeniCislo, Spoj.Parent_ID
-	FROM Adresar_Spojeni AS Spoj
-	INNER JOIN Adresar_TypSpojeni AS TypSpoj ON TypSpoj.ID = Spoj.TypSpojeni_ID AND TypSpoj.Kod = 'EmailFa'
+	FROM Adresar_Spojeni AS Spoj WITH(NOLOCK)
+	INNER JOIN Adresar_TypSpojeni AS TypSpoj WITH(NOLOCK) ON TypSpoj.ID = Spoj.TypSpojeni_ID AND TypSpoj.Kod = 'EmailFa'
 ) AS Spoj ON Spoj.Parent_ID = F.ID
+LEFT JOIN Ciselniky_ZpusobDopravy AS ZpDopr ON ZpDopr.ID = F.ZpusobDopravy_ID
 WHERE 
-	F.Nazev NOT LIKE '||%'
+	F.Deleted = 0 AND F.Hidden = 0
 	AND NOT (F.Kod LIKE 'AD20%' OR F.Kod LIKE 'AD21%')
-	AND (Grp.Kod != 'ZRUS' OR Grp.Kod IS NULL)
 ORDER BY ID;

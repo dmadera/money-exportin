@@ -44,6 +44,7 @@ IF %firma%==lipa (SET "url=http://velkoobchodpapirem.cz/loaddata.php")
 @echo put odberatele.txt ./
 @echo put dodavatele.txt ./
 @echo put prijemci.txt ./
+@echo put doprava.txt ./
 @echo bye
 ) > %TMP%
 

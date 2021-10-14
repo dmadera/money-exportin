@@ -13,19 +13,17 @@ SELECT DISTINCT
 	ISNULL(F.Tel2Cislo,'') AS Telefon1,
 	ISNULL(F.Email,'') AS Mail,
 	''
-FROM Adresar_Firma AS F
-LEFT JOIN System_Groups AS Grp ON Grp.ID = F.Group_ID
-LEFT JOIN Adresar_Osoba AS Os ON Os.ID = F.HlavniOsoba_ID
+FROM Adresar_Firma AS F WITH(NOLOCK) 
+LEFT JOIN Adresar_Osoba AS Os WITH(NOLOCK) ON Os.ID = F.HlavniOsoba_ID
 LEFT JOIN (
 	SELECT 
 		STRING_AGG(SpojeniCislo, ',') AS SpojeniCislo, Spoj.Parent_ID
-	FROM Adresar_Spojeni AS Spoj
-	INNER JOIN Adresar_TypSpojeni AS TypSpoj ON TypSpoj.ID = Spoj.TypSpojeni_ID AND TypSpoj.Kod = 'Email'
+	FROM Adresar_Spojeni AS Spoj WITH(NOLOCK)
+	INNER JOIN Adresar_TypSpojeni AS TypSpoj WITH(NOLOCK) ON TypSpoj.ID = Spoj.TypSpojeni_ID AND TypSpoj.Kod = 'Email'
 	GROUP BY Spoj.Parent_ID
 ) AS Spoj ON Spoj.Parent_ID = F.ID
 WHERE 
-	F.Deleted = 0
-	AND F.Nazev NOT LIKE '||%'
+	F.Deleted = 0 
+	AND F.Hidden = 0
 	AND (F.Kod LIKE 'AD20%' OR F.Kod LIKE 'AD21%')
-	AND (Grp.Kod != 'ZRUS' OR Grp.Kod IS NULL)
 ORDER BY ID;
